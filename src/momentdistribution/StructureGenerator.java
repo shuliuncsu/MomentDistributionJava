@@ -9,15 +9,17 @@ import java.util.Random;
  */
 public class StructureGenerator {
 
-    public static final int MAX_NUM_NODES = 100;
+    public static final int MAX_NUM_NODES = 100000;
     public static final int AVERAGE_MOMENT = 500;
     public static final double FIXED_RATE = 0.1;
     public static final double BEAM_NODE_RATIO = 2;
     public static final double MAX_COF = 0.7;
+    public static final double MIN_COF = 0.2;
+    public static final double MIN_DF = 0.2;
 
     public static void main(String[] args) {
         StructureGenerator sg = new StructureGenerator();
-        String filename = "src/Example/RandomStructure1.txt";
+        String filename = "src/Example/Random3.txt";
         sg.generateStructure(filename);
     }
 
@@ -26,8 +28,9 @@ public class StructureGenerator {
             PrintStream out = new PrintStream(filename);
             Random rand = new Random();
 
-            int numOfNodes = rand.nextInt(MAX_NUM_NODES);
+            int numOfNodes = MAX_NUM_NODES;//rand.nextInt(MAX_NUM_NODES);
             out.println(numOfNodes);
+            System.out.println(numOfNodes);
 
             for (int nodeIndex = 1; nodeIndex <= numOfNodes; nodeIndex++) {
                 out.println(nodeIndex + " " + (rand.nextDouble() < FIXED_RATE ? "F" : "N"));
@@ -43,9 +46,9 @@ public class StructureGenerator {
                     node2 = rand.nextInt(numOfNodes) + 1;
                 }
 
-                out.printf("%d %.1f %.1f %.1f %d %.1f %.1f %.1f\n",
-                        node1, rand.nextDouble(), rand.nextDouble() * MAX_COF, AVERAGE_MOMENT * rand.nextDouble(),
-                        node2, rand.nextDouble(), rand.nextDouble() * MAX_COF, -AVERAGE_MOMENT * rand.nextDouble());
+                out.printf("%d %.1f %.1f %.1f\t%d %.1f %.1f %.1f\n",
+                        node1, rand.nextDouble() + MIN_DF, rand.nextDouble() * (MAX_COF - MIN_COF) + MIN_COF, AVERAGE_MOMENT * rand.nextDouble(),
+                        node2, rand.nextDouble() + MIN_DF, rand.nextDouble() * (MAX_COF - MIN_COF) + MIN_COF, -AVERAGE_MOMENT * rand.nextDouble());
             }
 
             out.close();
