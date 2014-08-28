@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class MomentDistribution {
 
-    public static final double TOLERANCE = 0.1;
+    public static final double TOLERANCE = 0.0001;
 
     /**
      * @param args the command line arguments
@@ -89,7 +89,7 @@ public class MomentDistribution {
             while (numOfNodes <= 1000000) {
                 for (int i = 0; i < 3; i++) {
                     //sg.generateStructure_AllRandom(filename, numOfNodes, 2 * numOfNodes);
-                    sg.generateStructure_Linear(filename, numOfNodes);
+                    sg.generateStructure_AllRandom(filename, numOfNodes, numOfNodes * 2);
 
                     Structure structure = createStructureFromFile(filename);
                     out.println(structure.nodeMap.size() + " " + analyzeStructure_Linear(structure));
