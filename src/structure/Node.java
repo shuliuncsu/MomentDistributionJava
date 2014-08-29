@@ -1,4 +1,4 @@
-package momentdistribution;
+package structure;
 
 import java.util.ArrayList;
 

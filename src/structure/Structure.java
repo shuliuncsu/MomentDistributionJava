@@ -1,14 +1,39 @@
-package momentdistribution;
+package structure;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  *
  * @author Shu Liu
  */
 public class Structure {
+
+    public static Structure createStructureFromFile(String filename) {
+        try {
+            Scanner input = new Scanner(new File(filename));
+            Structure structure = new Structure();
+            int numOfNodes = input.nextInt();
+            System.out.print("Reading from file " + filename + " with " + numOfNodes + " nodes...");
+            for (int i = 0; i < numOfNodes; i++) {
+                structure.addNode(new Node(input.nextInt(), input.next().startsWith("F")));
+            }
+            int numOfBeams = input.nextInt();
+            for (int i = 0; i < numOfBeams; i++) {
+                structure.connectNodes(input.nextInt(), input.nextDouble(), input.nextDouble(), input.nextDouble(), input.nextInt(), input.nextDouble(), input.nextDouble(), input.nextDouble());
+            }
+            structure.normalize();
+            System.out.println(" Done");
+            return structure;
+        } catch (FileNotFoundException ex) {
+            System.out.println("File not found");
+            return null;
+        }
+    }
 
     HashMap<Integer, Node> nodeMap;
 

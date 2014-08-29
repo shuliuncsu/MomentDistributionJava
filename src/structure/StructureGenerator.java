@@ -1,4 +1,4 @@
-package momentdistribution;
+package structure;
 
 import java.io.PrintStream;
 import java.util.Random;
