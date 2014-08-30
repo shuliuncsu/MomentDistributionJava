@@ -1,4 +1,4 @@
-package structure;
+package Test;
 
 import java.io.PrintStream;
 import java.util.Random;

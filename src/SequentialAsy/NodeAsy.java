@@ -1,18 +1,19 @@
-package structure;
+package SequentialAsy;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
  * @author Shu Liu
  */
-public class Node {
+public class NodeAsy {
 
     final int id;
     final boolean isFixed;
-    ArrayList<Beam> beams;
+    ArrayList<BeamAsy> beams;
 
-    public Node(int id, boolean isFixed) {
+    public NodeAsy(int id, boolean isFixed) {
         this.id = id;
         this.isFixed = isFixed;
         beams = new ArrayList();
@@ -22,10 +23,10 @@ public class Node {
         if (beams.size() > 0) {
             if (!isFixed) {
                 double totalDF = 0;
-                for (Beam beam : beams) {
+                for (BeamAsy beam : beams) {
                     totalDF += beam.df;
                 }
-                for (Beam beam : beams) {
+                for (BeamAsy beam : beams) {
                     beam.df /= totalDF;
                 }
             }
@@ -41,7 +42,7 @@ public class Node {
     @Override
     public String toString() {
         String result = "Node # " + id + " - " + beams.size() + " beams - " + (isFixed ? "F" : "N") + "\n";
-        for (Beam beam : beams) {
+        for (BeamAsy beam : beams) {
             result += "\t" + beam.toString() + "\n";
         }
         return result;
@@ -49,11 +50,20 @@ public class Node {
 
     public double getUnbalancedMoment() {
         if (isFixed) {
+            for (BeamAsy beam : beams) {
+                beam.moment += beam.newMoment;
+                beam.newMoment = 0;
+            }
             return 0;
         }
 
+        Random rand = new Random();
         double result = 0;
-        for (Beam beam : beams) {
+        for (BeamAsy beam : beams) {
+            if (rand.nextDouble() <= 0.5) {
+                beam.moment += beam.newMoment;
+                beam.newMoment = 0;
+            }
             result += beam.moment;
         }
         return result;
@@ -68,14 +78,27 @@ public class Node {
      */
     public boolean redistributeMoment(double tolerance) {
         double unbalanced = getUnbalancedMoment();
-        if (isFixed || Math.abs(unbalanced) <= tolerance) {
+        if (isFixed || (Math.abs(unbalanced) <= tolerance && isClear())) {
             return true;
         } else {
-            for (Beam beam : beams) {
+            for (BeamAsy beam : beams) {
                 beam.moment -= unbalanced * beam.df;
-                beam.otherEndBeam.moment -= unbalanced * beam.df * beam.cof;
+                beam.otherEndBeam.newMoment -= unbalanced * beam.df * beam.cof;
             }
             return false;
         }
+    }
+
+    private boolean isClear() {
+        for (BeamAsy beam : beams) {
+            if (beam.newMoment > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public ArrayList<BeamAsy> getBeams() {
+        return beams;
     }
 }

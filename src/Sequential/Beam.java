@@ -1,4 +1,4 @@
-package structure;
+package Sequential;
 
 /**
  *
@@ -16,5 +16,9 @@ public class Beam {
     public String toString() {
         return String.format("OtherEndNode: %d df: %.2f cof: %.2f moment: %.1f",
                 otherEndNode.id, df, cof, moment);
+    }
+
+    public double getMoment() {
+        return moment;
     }
 }

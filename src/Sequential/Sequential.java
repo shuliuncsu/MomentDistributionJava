@@ -1,13 +1,12 @@
-package momentdistribution;
+package Sequential;
 
+import Test.MomentDistribution;
+import Test.StructureGenerator;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import structure.Node;
-import structure.Structure;
-import structure.StructureGenerator;
 
 /**
  *
@@ -16,7 +15,7 @@ import structure.StructureGenerator;
 public class Sequential {
 
     public static int analyzeStructure_Linear(Structure structure) {
-        System.out.print("Start analyze... ");
+        System.out.print("Start analyze (sequential, default linear order)... ");
         long timingStart = new Date().getTime();
         Node[] nodes = structure.getNodes();
         boolean finish = false;
@@ -26,16 +25,19 @@ public class Sequential {
             iterationCount++;
             for (Node node : nodes) {
                 finish = node.redistributeMoment(MomentDistribution.TOLERANCE) && finish;
+
+                //structure.printStructure();
             }
         }
         long timingEnd = new Date().getTime();
-        System.out.println("Finished after " + iterationCount + " iterations. Time cost: " + (timingEnd - timingStart) + " ms.");
+        System.out.println("Finished after " + iterationCount + " iterations. Time cost: " + (timingEnd - timingStart) + " ms.\n");
         return iterationCount;
     }
 
-    public static void singleRun(String filename) {
+    public static Structure singleRun(String filename) {
         Structure structure = Structure.createStructureFromFile(filename);
         analyzeStructure_Linear(structure);
+        return structure;
     }
 
     public static void batchRun(String filename) {
@@ -57,4 +59,11 @@ public class Sequential {
         }
     }
 
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        String filename = "src/Example/Random2.txt";
+        singleRun(filename);
+    }
 }

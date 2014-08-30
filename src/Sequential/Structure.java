@@ -1,4 +1,4 @@
-package structure;
+package Sequential;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -120,14 +120,4 @@ public class Structure {
 
         return max;
     }
-
-//    public boolean withinTolerance(double tolerance) {
-//        for (Node node : nodeMap.values()) {
-//            if (Math.abs(node.getUnbalancedMoment()) > tolerance) {
-//                return false;
-//            }
-//        }
-//
-//        return true;
-//    }
 }
