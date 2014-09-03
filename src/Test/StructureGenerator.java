@@ -9,9 +9,9 @@ import java.util.Random;
  */
 public class StructureGenerator {
 
-    public static final int MAX_NUM_NODES = 100000;
+    public static final int MAX_NUM_NODES = 10000;
     public static final int AVERAGE_MOMENT = 500;
-    public static final double FIXED_RATE = 0.1;
+    public static final double FIXED_RATE = 0.001;
     public static final double BEAM_NODE_RATIO = 2;
     public static final double MAX_COF = 0.7;
     public static final double MIN_COF = 0.2;
@@ -19,7 +19,7 @@ public class StructureGenerator {
 
     public static void main(String[] args) {
         StructureGenerator sg = new StructureGenerator();
-        String filename = "src/Example/Random3.txt";
+        String filename = "src/Example/Node1e4.txt";
         sg.generateStructure_AllRandom(filename, MAX_NUM_NODES, (int) (BEAM_NODE_RATIO * MAX_NUM_NODES));
     }
 
