@@ -6,27 +6,27 @@ import java.util.ArrayList;
  *
  * @author Shu Liu
  */
-public class Node {
+public class Node implements Comparable {
 
     final int id;
     final boolean isFixed;
-    ArrayList<Beam> beams;
+    ArrayList<End> ends;
 
     public Node(int id, boolean isFixed) {
         this.id = id;
         this.isFixed = isFixed;
-        beams = new ArrayList();
+        ends = new ArrayList();
     }
 
     public void normalize() {
-        if (beams.size() > 0) {
+        if (ends.size() > 0) {
             if (!isFixed) {
                 double totalDF = 0;
-                for (Beam beam : beams) {
-                    totalDF += beam.df;
+                for (End end : ends) {
+                    totalDF += end.df;
                 }
-                for (Beam beam : beams) {
-                    beam.df /= totalDF;
+                for (End end : ends) {
+                    end.df /= totalDF;
                 }
             }
         } else {
@@ -35,14 +35,14 @@ public class Node {
     }
 
     public boolean isIsolated() {
-        return beams.isEmpty();
+        return ends.isEmpty();
     }
 
     @Override
     public String toString() {
-        String result = "Node # " + id + " - " + beams.size() + " beams - " + (isFixed ? "F" : "N") + "\n";
-        for (Beam beam : beams) {
-            result += "\t" + beam.toString() + "\n";
+        String result = "Node # " + id + " - " + ends.size() + " ends - " + (isFixed ? "F" : "N") + "\n";
+        for (End end : ends) {
+            result += "\t" + end.toString() + "\n";
         }
         return result;
     }
@@ -53,8 +53,8 @@ public class Node {
         }
 
         double result = 0;
-        for (Beam beam : beams) {
-            result += beam.moment;
+        for (End end : ends) {
+            result += end.moment;
         }
         return result;
     }
@@ -67,19 +67,30 @@ public class Node {
      * @return whether the node is already balanced
      */
     public boolean redistributeMoment(double tolerance) {
-        double unbalanced = getUnbalancedMoment();
-        if (isFixed || Math.abs(unbalanced) <= tolerance) {
+        if (isFixed) {
             return true;
         } else {
-            for (Beam beam : beams) {
-                beam.moment -= unbalanced * beam.df;
-                beam.otherEndBeam.moment -= unbalanced * beam.df * beam.cof;
+            double unbalanced = getUnbalancedMoment();
+            if (Math.abs(unbalanced) <= tolerance) {
+                return true;
+            } else {
+                for (End end : ends) {
+                    end.moment -= unbalanced * end.df;
+                    end.farEnd.moment -= unbalanced * end.df * 0.5;
+                }
+                return false;
             }
-            return false;
         }
     }
 
-    public ArrayList<Beam> getBeams() {
-        return beams;
+    public ArrayList<End> getEnds() {
+        return ends;
     }
+
+    @Override
+    public int compareTo(Object o) {
+        Node node2 = (Node) o;
+        return -Double.compare(Math.abs(getUnbalancedMoment()), Math.abs(node2.getUnbalancedMoment()));
+    }
+
 }

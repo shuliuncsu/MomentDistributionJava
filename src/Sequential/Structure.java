@@ -2,9 +2,8 @@ package Sequential;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -24,7 +23,7 @@ public class Structure {
             }
             int numOfBeams = input.nextInt();
             for (int i = 0; i < numOfBeams; i++) {
-                structure.connectNodes(input.nextInt(), input.nextDouble(), input.nextDouble(), input.nextDouble(), input.nextInt(), input.nextDouble(), input.nextDouble(), input.nextDouble());
+                structure.connectNodes(input.nextInt(), input.nextDouble(), input.nextInt(), input.nextDouble(), input.nextDouble());
             }
             structure.normalize();
             System.out.println(" Done");
@@ -49,8 +48,7 @@ public class Structure {
         }
     }
 
-    public void connectNodes(int nodeID1, double df1, double cof1, double moment1,
-            int nodeID2, double df2, double cof2, double moment2) {
+    public void connectNodes(int nodeID1, double moment1, int nodeID2, double moment2, double stiffness) {
 
         if (!nodeMap.containsKey(nodeID1)) {
             System.out.println("Error: node " + nodeID1 + " doesn't exists in structure");
@@ -64,34 +62,26 @@ public class Structure {
         Node node1 = nodeMap.get(nodeID1);
         Node node2 = nodeMap.get(nodeID2);
 
-        Beam beam1 = new Beam();
-        Beam beam2 = new Beam();
+        End end1 = new End();
+        End end2 = new End();
 
-        node1.beams.add(beam1);
-        node2.beams.add(beam2);
+        node1.ends.add(end1);
+        node2.ends.add(end2);
 
-        beam1.df = df1;
-        beam1.cof = cof1;
-        beam1.moment = moment1;
-        beam1.otherEndNode = node2;
-        beam1.otherEndBeam = beam2;
+        end1.df = stiffness;
+        end1.moment = moment1;
+        end1.farNode = node2;
+        end1.farEnd = end2;
 
-        beam2.df = df2;
-        beam2.cof = cof2;
-        beam2.moment = moment2;
-        beam2.otherEndNode = node1;
-        beam2.otherEndBeam = beam1;
+        end2.df = stiffness;
+        end2.moment = moment2;
+        end2.farNode = node1;
+        end2.farEnd = end1;
     }
 
     public void normalize() {
-        Iterator<Map.Entry<Integer, Node>> iter = nodeMap.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<Integer, Node> entry = iter.next();
-            if (entry.getValue().isIsolated()) {
-                iter.remove();
-            } else {
-                entry.getValue().normalize();
-            }
+        for (Node node : nodeMap.values()) {
+            node.normalize();
         }
     }
 
@@ -112,12 +102,7 @@ public class Structure {
         return nodes;
     }
 
-    public double getMaxUnbalanced() {
-        double max = 0;
-        for (Node node : nodeMap.values()) {
-            max = Math.max(max, Math.abs(node.getUnbalancedMoment()));
-        }
-
-        return max;
+    public Collection<Node> getNodesSet() {
+        return nodeMap.values();
     }
 }
